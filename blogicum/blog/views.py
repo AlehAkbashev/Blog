@@ -96,10 +96,10 @@ class PostDetailDetailView(DetailView):
             post_detail.pub_date >=
             datetime.now(tz=pytz.timezone('Europe/Moscow'))
         )
-        if (post_detail.author != request.user and
-           (not (post_detail.is_published and
-                 post_detail.category.is_published
-                 ) or pub_date_future)):
+        if (post_detail.author != request.user
+            and (not (post_detail.is_published
+                      and post_detail.category.is_published
+                      ) or pub_date_future)):
             raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
@@ -234,8 +234,8 @@ class DeleteCommentDeleteView(LoginRequiredMixin, DeleteView):
             *args: Any,
             **kwargs: Any) -> HttpResponse:
         comment_to_delete = get_object_or_404(Comment, pk=kwargs['id'])
-        if (comment_to_delete.author == request.user or
-                request.user.is_superuser):
+        if (comment_to_delete.author == request.user
+            or request.user.is_superuser):
             return super().dispatch(request, *args, **kwargs)
         return redirect('blog:post_detail', pk=kwargs['pk'])
 
