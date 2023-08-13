@@ -92,12 +92,14 @@ class PostDetailDetailView(DetailView):
             *args: Any,
             **kwargs: Any) -> HttpResponse:
         post_detail = get_object_or_404(Post, pk=kwargs['pk'])
-        if post_detail.author != request.user and (not (
-                post_detail.is_published and
-                post_detail.category.is_published) or
-                post_detail.pub_date >= datetime.now(
-                    tz=pytz.timezone('Europe/Moscow')
-                )):
+        pub_date_future = (
+            post_detail.pub_date >=
+            datetime.now(tz=pytz.timezone('Europe/Moscow'))
+        )
+        if (post_detail.author != request.user and
+           (not (post_detail.is_published and
+                 post_detail.category.is_published
+                 ) or pub_date_future)):
             raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
