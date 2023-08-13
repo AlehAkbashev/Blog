@@ -93,8 +93,8 @@ class PostDetailDetailView(DetailView):
             **kwargs: Any) -> HttpResponse:
         post_detail = get_object_or_404(Post, pk=kwargs['pk'])
         pub_date_future = (
-            post_detail.pub_date >=
-            datetime.now(tz=pytz.timezone('Europe/Moscow'))
+            post_detail.pub_date
+            >= datetime.now(tz=pytz.timezone('Europe/Moscow'))
         )
         if (post_detail.author != request.user
             and (not (post_detail.is_published
@@ -235,7 +235,7 @@ class DeleteCommentDeleteView(LoginRequiredMixin, DeleteView):
             **kwargs: Any) -> HttpResponse:
         comment_to_delete = get_object_or_404(Comment, pk=kwargs['id'])
         if (comment_to_delete.author == request.user
-            or request.user.is_superuser):
+                or request.user.is_superuser):
             return super().dispatch(request, *args, **kwargs)
         return redirect('blog:post_detail', pk=kwargs['pk'])
 
