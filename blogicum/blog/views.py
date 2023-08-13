@@ -92,11 +92,10 @@ class PostDetailDetailView(DetailView):
             *args: Any,
             **kwargs: Any) -> HttpResponse:
         post_detail = get_object_or_404(Post, pk=kwargs['pk'])
-        if post_detail.author != request.user and (
-            not (
-                post_detail.is_published
-                and post_detail.category.is_published)
-                or post_detail.pub_date >= datetime.now(
+        if post_detail.author != request.user and (not (
+                post_detail.is_published and
+                post_detail.category.is_published) or
+                post_detail.pub_date >= datetime.now(
                     tz=pytz.timezone('Europe/Moscow')
                 )):
             raise Http404()
@@ -233,8 +232,7 @@ class DeleteCommentDeleteView(LoginRequiredMixin, DeleteView):
             *args: Any,
             **kwargs: Any) -> HttpResponse:
         comment_to_delete = get_object_or_404(Comment, pk=kwargs['id'])
-        if (
-            comment_to_delete.author == request.user or
+        if (comment_to_delete.author == request.user or
                 request.user.is_superuser):
             return super().dispatch(request, *args, **kwargs)
         return redirect('blog:post_detail', pk=kwargs['pk'])
@@ -254,8 +252,7 @@ class EditProfileUpdateView(LoginRequiredMixin, UpdateView):
             self,
             request: HttpRequest,
             *args: Any,
-            **kwargs: Any
-         ) -> HttpResponse:
+            **kwargs: Any) -> HttpResponse:
         if kwargs['username'] == request.user.username:
             return super().dispatch(request, *args, **kwargs)
         return redirect('blog:profile', username=kwargs['username'])
