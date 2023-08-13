@@ -38,7 +38,7 @@ class PostListView(ListView):
                 ),
                 is_published=True,
                 category__is_published=True
-                )
+            )
     )
 
 
@@ -77,7 +77,7 @@ class CategoryPostListView(ListView):
             .filter(
                 slug=self.kwargs['category_slug'],
                 is_published=True
-                )
+            )
         )
         return context
 
@@ -90,16 +90,15 @@ class PostDetailDetailView(DetailView):
             self,
             request: HttpRequest,
             *args: Any,
-            **kwargs: Any
-         ) -> HttpResponse:
+            **kwargs: Any) -> HttpResponse:
         post_detail = get_object_or_404(Post, pk=kwargs['pk'])
-        if (
+        if post_detail.author != request.user and (
             not (
                 post_detail.is_published
                 and post_detail.category.is_published)
                 or post_detail.pub_date >= datetime.now(
-                    tz=pytz.timezone('Europe/Moscow'))
-                ) and post_detail.author != request.user:
+                    tz=pytz.timezone('Europe/Moscow')
+                )):
             raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
@@ -149,8 +148,7 @@ class PostDeleteDeleteView(LoginRequiredMixin, DeleteView):
             self,
             request: HttpRequest,
             *args: Any,
-            **kwargs: Any
-         ) -> HttpResponse:
+            **kwargs: Any) -> HttpResponse:
         post_to_delete = get_object_or_404(Post, pk=kwargs['pk'])
         if post_to_delete.author == request.user or request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
@@ -172,8 +170,7 @@ class AddCommentCreateView(LoginRequiredMixin, CreateView):
     def dispatch(
             self,
             request: HttpRequest,
-            *args: Any, **kwargs: Any
-         ) -> HttpResponse:
+            *args: Any, **kwargs: Any) -> HttpResponse:
         self.main_post = get_object_or_404(Post, pk=kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)
 
@@ -181,8 +178,7 @@ class AddCommentCreateView(LoginRequiredMixin, CreateView):
             self,
             request: HttpRequest,
             *args: str,
-            **kwargs: Any
-         ) -> HttpResponse:
+            **kwargs: Any) -> HttpResponse:
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
@@ -235,13 +231,11 @@ class DeleteCommentDeleteView(LoginRequiredMixin, DeleteView):
             self,
             request: HttpRequest,
             *args: Any,
-            **kwargs: Any
-         ) -> HttpResponse:
+            **kwargs: Any) -> HttpResponse:
         comment_to_delete = get_object_or_404(Comment, pk=kwargs['id'])
         if (
-            comment_to_delete.author == request.user
-            or request.user.is_superuser
-             ):
+            comment_to_delete.author == request.user or
+                request.user.is_superuser):
             return super().dispatch(request, *args, **kwargs)
         return redirect('blog:post_detail', pk=kwargs['pk'])
 

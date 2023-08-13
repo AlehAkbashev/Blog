@@ -93,7 +93,8 @@ class Post(CreatedAtIsPublished, Title):
     text - Текст;
     pub_date - Дата и время публикации;
     author - Автор публикации;
-    Связь с моделями: Локации, Категории.
+    image - Обложка поста;
+    Связь с моделями: Локации, Категории, Комментарии.
     """
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
@@ -131,6 +132,14 @@ class Post(CreatedAtIsPublished, Title):
 
 
 class Comment(models.Model):
+    """
+    Модель Комментариев к постам с полями:
+    text - Текст комментария;
+    post - Комментируемый пост;
+    created_at - Дата создания;
+    author - Автор комментария;
+    Связь с моделями: Локации, Категории, Посты.
+    """
     text = models.TextField('Текст комментария')
     post = models.ForeignKey(
         Post,
