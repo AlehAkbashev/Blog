@@ -52,7 +52,7 @@ class CategoryPostListView(ListView):
             Category, slug=self.kwargs["category_slug"]
         )
         return (
-            category.posts_of_category.select_related(
+            category.posts.select_related(
                 "category", "author", "location"
             )
             .filter(category__is_published=True)
@@ -266,7 +266,7 @@ class ProfileInfoTemplateView(ListView):
     def get_queryset(self) -> QuerySet[Any]:
         author = get_object_or_404(User, username=self.kwargs["username"])
         return (
-            author.posts_of_author.select_related(
+            author.posts.select_related(
                 "category", "author", "location"
             )
             .order_by("-pub_date")

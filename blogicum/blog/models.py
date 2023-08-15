@@ -109,7 +109,7 @@ class Post(CreatedAtIsPublished, Title):
         User,
         on_delete=models.CASCADE,
         verbose_name="Автор публикации",
-        related_name="posts_of_author",
+        related_name="posts",
     )
     location = models.ForeignKey(
         Location,
@@ -117,14 +117,14 @@ class Post(CreatedAtIsPublished, Title):
         null=True,
         on_delete=models.SET_NULL,
         verbose_name="Местоположение",
-        related_name="posts_of_location",
+        related_name="posts",
     )
     category = models.ForeignKey(
         Category,
         null=True,
         on_delete=models.SET_NULL,
         verbose_name="Категория",
-        related_name="posts_of_category",
+        related_name="posts",
     )
     image = models.ImageField("Фото", blank=True, upload_to="posts_images")
 
@@ -141,7 +141,7 @@ class Comment(models.Model):
     post - Комментируемый пост;
     created_at - Дата создания;
     author - Автор комментария;
-    Связь с моделями: Локации, Категории, Посты.
+    Связь с моделями: Автор, Посты.
     """
 
     text = models.TextField("Текст комментария")
